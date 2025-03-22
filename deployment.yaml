@@ -4,24 +4,25 @@ metadata:
   name: my-pvc
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteOnce  # Changed from ReadWriteMany
   resources:
     requests:
       storage: 1Gi
+  storageClassName: standard-rwo
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: container1-deployment
+  name: combined-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: container1
+      app: combined-app
   template:
     metadata:
       labels:
-        app: container1
+        app: combined-app
     spec:
       containers:
       - name: container1
@@ -31,26 +32,6 @@ spec:
         volumeMounts:
         - name: shared-data
           mountPath: /mency_PV_dir
-      volumes:
-      - name: shared-data
-        persistentVolumeClaim:
-          claimName: my-pvc
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: container2-deployment
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: container2
-  template:
-    metadata:
-      labels:
-        app: container2
-    spec:
-      containers:
       - name: container2
         image: us-central1-docker.pkg.dev/kubernetes-assignment-454505/kubernetes-assignment/container2:latest
         ports:
@@ -70,7 +51,7 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: container1
+    app: combined-app
   ports:
   - port: 80
     targetPort: 8080
@@ -82,7 +63,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: container2
+    app: combined-app
   ports:
   - port: 8081
     targetPort: 8081
