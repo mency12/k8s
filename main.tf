@@ -1,5 +1,5 @@
 provider "google" {
-  project = "YOUR_PROJECT_ID"  # Replace with your GCP project ID
+  project = "kubernetes-assignment-454505"  # Replace with your GCP project ID
   region  = "us-central1"
 }
 
